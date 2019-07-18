@@ -19,13 +19,6 @@ Keep in mind that the orage square appears everytime in a new place.
 Create .js file with class or classes to implement graph object. See requirments in graph_requirements.md
 
 
-## How to pass
-**DON'T FORK FROM THIS REPOSITORY!**
-
-1. Create your own repository on Github or Gitlab
-2. Copy task files there and complete the tasks
-3. Add your contact info in this file below for further communication
-4. Send back the link to the repository.
-
-One more thing: be brave and creative :)
-We are waiting for you to join our team!
+# Contact info:
+## Name: Kristina Tregubova (Tikhonova)
+## Email: Kristina.Tikhonova@t-systems.com
