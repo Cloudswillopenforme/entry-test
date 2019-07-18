@@ -21,4 +21,5 @@ Create .js file with class or classes to implement graph object. See requirments
 
 ## Contact info:
 Name: Kristina Tregubova (Tikhonova)
+
 Email: Kristina.Tikhonova@t-systems.com(corporate); Christine.Tikhonowa@gmail.com (personal)
