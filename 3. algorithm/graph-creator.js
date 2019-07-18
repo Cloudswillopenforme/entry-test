@@ -1,83 +1,98 @@
-// 1.	Вершины могут быть представлены различными типами
-// 2.	Граф должен быть взвешенным
+// 1.	Вершины могут быть представлены различными типами +
+// 2.	Граф должен быть взвешенным +
 // 3.	Граф может быть как направленным, так и ненаправленным +
 // 4.	Должна быть возможность выбрать вершину +
-// 5.	Должна быть возможность выбрать ребро +
+// 5.	Должна быть возможность выбрать ребро 
 // 6.	Должна быть возможность выбрать всех соседей указанной вершины +
 // 7.	Должна быть возможность добавить новую вершину +
 // 8.	Должна быть возможность добавить новое ребро +
 // 9.	Должна быть возможность удалить вершину +
 // 10.	Должна быть возможность удалить ребро +
-// 11.	Должна быть возможность развернуть граф, если он направленный
-// 12.	Должна быть возможность получить матрицы смежности
-// 13.	Должна быть возможность получить вес указанного ребра
-// 14.	Должна быть возможность сделать выборку подграфа по указанным вершинам (на входе массив вершин, на выходе указанные вершины со всеми ребрами между ними)
-// 15.	Должен быть реализован любой алгоритм поиска пути между двумя точками графа
-
-Graph.UNDIRECTED = 'undirected graph'; 
-Graph.DIRECTED = 'directed graph'; 
+// 11.	Должна быть возможность развернуть граф, если он направленный +
+// 12.	Должна быть возможность получить матрицы смежности +
+// 13.	Должна быть возможность получить вес указанного ребра +
+// 14.	Должна быть возможность сделать выборку подграфа по указанным вершинам (на входе массив вершин, на выходе указанные вершины со всеми ребрами между ними) +
+// 15.	Должен быть реализован любой алгоритм поиска пути между двумя точками графа +
 
 class Node {
-    constructor(value) {
-      this.value = value;
-      this.adjList = new Map(); 
+  constructor(value, adjList) {
+    this.value = value;
+    if (!adjList) {
+      this.adjList = new Map();
+    } else {
+      this.adjList = adjList;
     }
-    
-    addAdjacent(node) {
-      this.adjacents.add(node);
-    }
-    
-    removeAdjacent(node) {
-      return this.adjacents.delete(node);
-    }
-    
-    isAdjacent(node) {
-      return this.adjacents.has(node);
-    }
-
-    getAdjacents() {
-      return Array.from(this.adjacents);
-    }
-    
   }
 
+  addAdjacent(node, weight) {
+    this.adjList.set(node, weight);
+  }
+
+  removeAdjacent(node) {
+    return this.adjList.delete(node);
+  }
+
+  isAdjacent(node) {
+    return this.adjList.has(node);
+  }
+
+  getAdjacents() {
+    return this.adjList;
+  }
+
+}
+
 class Graph {
-  
+
   constructor(edgeDirection) {
     this.nodes = new Map();
     this.edgeDirection = edgeDirection;
   }
-  
-  addVertex(value) {
-    if (this.nodes.has(value)) { 
+
+  // 4
+  getVertex(value) {
+    return this.nodes.get(value);
+  }
+
+  // 7
+  addVertex(value, adjList) {
+    if (this.nodes.has(value)) {
       return this.nodes.get(value);
     }
-    const vertex = new Node(value); 
-    this.nodes.set(value, vertex); 
+    const vertex = new Node(value, adjList);
+    this.nodes.set(value, vertex);
     return vertex;
   }
-  
-  removeVertex(value) {
-    const current = this.nodes.get(value); 
-    if (current) {
-      Array.from(this.nodes.values()).forEach(node => node.removeAdjacent(current)); 
-    }
-    return this.nodes.delete(value); 
-  }
-  
-  addEdge(source, destination) {
-    const sourceNode = this.addVertex(source); 
-    const destinationNode = this.addVertex(destination); 
 
-    sourceNode.addAdjacent(destinationNode); 
+  // 9
+  removeVertex(value) {
+    const current = this.nodes.get(value);
+    if (current) {
+      Array.from(this.nodes.values()).forEach(node => node.removeAdjacent(current));
+    }
+    return this.nodes.delete(value);
+  }
+
+  // 5 what was meant by getting the edge?
+  getEdge(source, destination) {
+
+  }
+
+  // 8
+  addEdge(source, destination, weight) {
+    const sourceNode = this.addVertex(source);
+    const destinationNode = this.addVertex(destination);
+
+    sourceNode.addAdjacent(destinationNode, weight);
 
     if (this.edgeDirection === Graph.UNDIRECTED) {
-      destinationNode.addAdjacent(sourceNode); 
+      destinationNode.addAdjacent(sourceNode, weight);
     }
 
     return [sourceNode, destinationNode];
   }
-  
+
+  // 10
   removeEdge(source, destination) {
     const sourceNode = this.nodes.get(source);
     const destinationNode = this.nodes.get(destination);
@@ -88,22 +103,113 @@ class Graph {
       if (this.edgeDirection === Graph.UNDIRECTED) {
         destinationNode.removeAdjacent(sourceNode);
       }
+      console.log('edge id successfully removed');
+      return [sourceNode, destinationNode];
+    } else {
+      console.log("No such edge found")
     }
-
-    return [sourceNode, destinationNode];
   }
-  
-  areNeighbours(source, destination) {
+
+  // 6
+  getAdjacentsList(source) {
+    const sourceNode = this.nodes.get(source);
+    let adjacents = [];
+    for (let key of sourceNode.adjList.keys()) {
+      adjacents.push(key.value);
+    };
+    return adjacents;
+  }
+
+  // 13
+  getWeight(source, destination) {
     const sourceNode = this.nodes.get(source);
     const destinationNode = this.nodes.get(destination);
 
-    if (sourceNode && destinationNode) {
-      return sourceNode.isAdjacent(destinationNode);
+    if (sourceNode.isAdjacent(destinationNode)) {
+      const weight = sourceNode.adjList.get(destinationNode);
+      return weight;
+    } else {
+      return 0;
     }
-
-    return false;
   }
 
+  // 12
+  getAdjacencyMatrix() {
+    const matrix = [];
+    for (let key1 of this.nodes.keys()) {
+      matrix[key1] = [];
+      for (let key2 of this.nodes.keys()) {
+        let weight = this.getWeight(key1, key2);
+        if (weight) {
+          matrix[key1][key2] = weight;
+        } else {
+          matrix[key1][key2] = 0;
+        }
+      };
+    };
+    return matrix;
+  }
+
+  // 14
+  getSubGraph(listOfVertices) {
+    const sourceAdjList = this.nodes;
+    var keysArePresent = listOfVertices.every((key) => {
+      return sourceAdjList.has(key);
+    });
+    if (!keysArePresent) {
+      console.log("Not all entered nodes are present in the source graph");
+      return;
+    }
+    const subGraph = new Graph(this.edgeDirection);
+    listOfVertices.forEach((key) => {
+      const sourceNode = sourceAdjList.get(key);
+      let newAdjList = new Map();
+      for (let adj of sourceNode.adjList.entries()) {
+        newAdjList.set(adj);
+      }
+      const newNode = subGraph.addVertex(sourceNode.value, newAdjList);
+
+      for (let adj of newNode.adjList.keys()) {
+        if (!listOfVertices.includes(adj)) {
+          newNode.removeAdjacent(adj);
+        }
+      }
+    });
+
+
+    return subGraph;
+  }
+
+  // 11
+  getDirectedGraphReversed() {
+    if (this.edgeDirection === Graph.UNDIRECTED) {
+      console.log("this graph is undirected, can't reverse undirected graphs");
+      return;
+    } else {
+
+      const tempGraph = new Graph(Graph.DIRECTED);
+
+      for (let node of this.nodes.values()) {
+
+        let newNode = tempGraph.addVertex(node.value);
+
+        for (let adj of node.adjList.keys()) {
+          let weight = this.getWeight(node.value, adj.value);
+          node.adjList.clear();
+
+          let newAdjNode = tempGraph.addVertex(adj.value);
+          newAdjNode.addAdjacent(newNode, weight);
+        };
+
+      };
+
+      this.nodes = tempGraph.nodes;
+      return this.getAdjacencyMatrix();
+    }
+  }
+
+
+  // 15 any path
   findPath(source, destination, path = new Map()) {
     const sourceNode = this.nodes.get(source);
     const destinationNode = this.nodes.get(destination);
@@ -117,8 +223,9 @@ class Graph {
       return Array.from(newPath.keys());
     }
 
-    for (const node of sourceNode.getAdjacents()) {
+    for (const node of sourceNode.getAdjacents().keys()) {
       if (!newPath.has(node)) {
+
         const nextPath = this.findPath(node.value, destination, newPath);
         if (nextPath.length) {
           return nextPath;
@@ -129,7 +236,52 @@ class Graph {
     return [];
   }
 
-
 }
 
+Graph.UNDIRECTED = Symbol('undirected graph');
+Graph.DIRECTED = Symbol('directed graph');
 
+//TEST
+const graph = new Graph(Graph.UNDIRECTED);
+
+graph.addVertex("A");
+graph.addVertex("B");
+graph.addVertex("C");
+
+graph.addEdge("A", "B", 1);
+graph.addEdge("C", "A", 4);
+graph.addEdge("B", "C", 2);
+
+console.log(graph.getVertex("A")); // Node entity
+
+graph.addVertex("D");
+graph.addEdge("D", "A", 4);
+console.log(graph.removeEdge("D", "A")) // message and array of nodes, between which the edge was removed
+console.log(graph.removeVertex("D")); // true
+console.log(graph.removeVertex("M")); // false
+
+console.log(graph.getAdjacentsList("A")); //Array of adjacents
+console.log(graph.getWeight("A", "C")); // 3
+console.log(graph.getAdjacencyMatrix()); // Matrix 
+console.log(graph.getSubGraph(["A", "B"])); // new Graph instance
+console.log(graph.getDirectedGraphReversed()); // error message
+
+graph.addVertex("D");
+graph.addVertex("E");
+graph.addEdge("C", "D", 5);
+graph.addEdge("D", "E", 3);
+console.log(graph.findPath("A", "E")); // path array with nodes
+console.log(graph.findPath("D", "A")); // path array with nodes
+
+const directedGraph = new Graph(Graph.DIRECTED);
+
+directedGraph.addVertex("A");
+directedGraph.addVertex("B");
+directedGraph.addVertex("C");
+
+directedGraph.addEdge("A", "B", 1);
+directedGraph.addEdge("B", "C", 2);
+directedGraph.addEdge("C", "A", 3);
+
+console.log(directedGraph.getAdjacencyMatrix()); // adj Matrix
+console.log(directedGraph.getDirectedGraphReversed()); // adjacency Matrix with opposite values
