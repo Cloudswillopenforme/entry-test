@@ -19,6 +19,7 @@ Keep in mind that the orage square appears everytime in a new place.
 Create .js file with class or classes to implement graph object. See requirments in graph_requirements.md
 
 
-# Contact info:
-## Name: Kristina Tregubova (Tikhonova)
-## Email: Kristina.Tikhonova@t-systems.com
+## Contact info:
+Name: Kristina Tregubova (Tikhonova)
+
+Email: Kristina.Tikhonova@t-systems.com(corporate); Christine.Tikhonowa@gmail.com (personal)
