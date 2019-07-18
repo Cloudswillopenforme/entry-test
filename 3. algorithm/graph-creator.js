@@ -73,9 +73,23 @@ class Graph {
     return this.nodes.delete(value);
   }
 
-  // 5 what was meant by getting the edge?
+  // 5 the task is not clear enough
   getEdge(source, destination) {
+    const sourceNode = this.addVertex(source);
+    const destinationNode = this.addVertex(destination);
 
+    if (!(sourceNode && destinationNode)) {
+      console.log("Entered not existing vertices");
+      return;
+    } 
+
+    if (sourceNode.isAdjacent(destinationNode)) {
+      console.log(`There is an adge between node ${source} and ${destination} with weight: ${this.getWeight(source, destination)}`);
+      return;
+      } else {
+      console.log("No edge found");
+      return;
+    }
   }
 
   // 8
@@ -103,7 +117,7 @@ class Graph {
       if (this.edgeDirection === Graph.UNDIRECTED) {
         destinationNode.removeAdjacent(sourceNode);
       }
-      console.log('edge id successfully removed');
+      console.log('Edge is successfully removed');
       return [sourceNode, destinationNode];
     } else {
       console.log("No such edge found")
@@ -253,6 +267,9 @@ graph.addEdge("C", "A", 4);
 graph.addEdge("B", "C", 2);
 
 console.log(graph.getVertex("A")); // Node entity
+console.log(graph.getEdge("A", "C")); // found edge message
+console.log(graph.getEdge("A", "D")); // error message
+
 
 graph.addVertex("D");
 graph.addEdge("D", "A", 4);
@@ -261,10 +278,10 @@ console.log(graph.removeVertex("D")); // true
 console.log(graph.removeVertex("M")); // false
 
 console.log(graph.getAdjacentsList("A")); //Array of adjacents
-console.log(graph.getWeight("A", "C")); // 3
+console.log(graph.getWeight("A", "C")); // 4
 console.log(graph.getAdjacencyMatrix()); // Matrix 
 console.log(graph.getSubGraph(["A", "B"])); // new Graph instance
-console.log(graph.getDirectedGraphReversed()); // error message
+console.log(graph.getDirectedGraphReversed()); // error message 
 
 graph.addVertex("D");
 graph.addVertex("E");
