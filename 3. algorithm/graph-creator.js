@@ -14,6 +14,29 @@
 // 14.	Должна быть возможность сделать выборку подграфа по указанным вершинам (на входе массив вершин, на выходе указанные вершины со всеми ребрами между ними) +
 // 15.	Должен быть реализован любой алгоритм поиска пути между двумя точками графа +
 
+class PriorityQueue {
+    nodesQueue = [];
+
+    enqueue = (priority, key) => {
+      this.nodesQueue.push({
+        key: key,
+        priority: priority
+      });
+      this.sort();
+    };
+    dequeue = () => {
+      return this.nodesQueue.shift().key;
+    };
+    sort = () => {
+      this.nodesQueue.sort((a, b) => {
+        return a.priority - b.priority;
+      });
+    };
+    isEmpty = () => {
+      return !this.nodesQueue.length;
+    };
+  }
+
 class Node {
   constructor(value, adjList) {
     this.value = value;
@@ -37,7 +60,7 @@ class Node {
   }
 
   getAdjacents() {
-    return this.adjList;
+    return this.adjList.keys();
   }
 
 }
@@ -81,12 +104,12 @@ class Graph {
     if (!(sourceNode && destinationNode)) {
       console.log("Entered not existing vertices");
       return;
-    } 
+    }
 
     if (sourceNode.isAdjacent(destinationNode)) {
       console.log(`There is an adge between node ${source} and ${destination} with weight: ${this.getWeight(source, destination)}`);
       return;
-      } else {
+    } else {
       console.log("No edge found");
       return;
     }
@@ -234,10 +257,15 @@ class Graph {
     newPath.set(sourceNode);
 
     if (source === destination) {
-      return Array.from(newPath.keys());
+      const result = [];
+      for(let vertex of newPath.keys()) {
+      	result.push(vertex.value);
     }
+    return result;
+}
+    
 
-    for (const node of sourceNode.getAdjacents().keys()) {
+    for (const node of sourceNode.getAdjacents()) {
       if (!newPath.has(node)) {
 
         const nextPath = this.findPath(node.value, destination, newPath);
@@ -250,6 +278,64 @@ class Graph {
     return [];
   }
 
+
+  // 15 shortest path (Dijkstra algorithm)
+
+  findShortestPath(start, finish) {
+    let nodes = new PriorityQueue(),
+    	vertices = this.nodes,
+	      distances = {},
+	      previous = {},
+	      path = [],
+	      smallest, vertex, neighbor, alt;
+
+
+
+    for (vertex of vertices.keys()) {
+      if (vertex === start) {
+        distances[vertex] = 0;
+        nodes.enqueue(0, vertex);
+      } else {
+        distances[vertex] = Infinity;
+        nodes.enqueue(Infinity, vertex);
+      }
+
+      previous[vertex] = null;
+    }
+
+    while (!nodes.isEmpty()) {
+      smallest = nodes.dequeue();
+
+      if (smallest === finish) {
+        path = [];
+
+        while (previous[smallest]) {
+          path.push(smallest);
+          smallest = previous[smallest];
+        }
+
+        break;
+      }
+
+      if (!smallest || distances[smallest] === Infinity) {
+        continue;
+      }
+
+      for (neighbor of vertices.get(smallest).getAdjacents()) {
+      	let neighborValue = neighbor.value;
+        alt = distances[smallest] + vertices.get(smallest).adjList.get(neighbor);
+
+        if (alt < distances[neighborValue]) {
+          distances[neighborValue] = alt;
+          previous[neighborValue] = smallest;
+
+          nodes.enqueue(alt, neighborValue);
+        }
+      }
+    }
+
+    return path.concat([start]).reverse();;
+  };
 }
 
 Graph.UNDIRECTED = Symbol('undirected graph');
@@ -287,8 +373,10 @@ graph.addVertex("D");
 graph.addVertex("E");
 graph.addEdge("C", "D", 5);
 graph.addEdge("D", "E", 3);
-console.log(graph.findPath("A", "E")); // path array with nodes
-console.log(graph.findPath("D", "A")); // path array with nodes
+console.log(graph.findPath("A", "E")); // path array with nodes names 
+console.log(graph.findPath("D", "A")); // path array with nodes names
+console.log(graph.findShortestPath("A", "E")); // path array with nodes names
+console.log(graph.findShortestPath("D", "A")); // // path array with nodes names
 
 const directedGraph = new Graph(Graph.DIRECTED);
 
