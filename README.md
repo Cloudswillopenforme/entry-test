@@ -1,4 +1,4 @@
-# Available tasks
+# Description
 Hi, here are the testing round tasks for Frontend School at T-Systems.
 
 ## 1 Page from JPEG
@@ -21,5 +21,4 @@ Create .js file with class or classes to implement graph object. See requirments
 
 ## Contact info:
 Name: Kristina Tregubova (Tikhonova)
-
-Email: Kristina.Tikhonova@t-systems.com(corporate); Christine.Tikhonowa@gmail.com (personal)
+Email: Christine.Tikhonowa@gmail.com (personal)
